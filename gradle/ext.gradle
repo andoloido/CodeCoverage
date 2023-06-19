@@ -1,0 +1,6 @@
+ext {
+    gradle_version = '4.2.0'
+    gson_version = '2.8.2'
+    asm_version = '9.2'
+    guava_version = '23.0'
+}
