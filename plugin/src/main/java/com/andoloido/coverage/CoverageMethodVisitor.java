@@ -8,6 +8,9 @@ import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 
 
+/**
+ * MethodVisitor
+ */
 public class CoverageMethodVisitor extends MethodNode {
 
     private final int mapping;
@@ -15,6 +18,9 @@ public class CoverageMethodVisitor extends MethodNode {
 
     private MethodVisitor mv;
 
+    /**
+     * constructor
+     */
     public CoverageMethodVisitor(int access, String name, String desc, String signature, String[] exceptions, int mapping, String className, MethodVisitor mv) {
         super(Opcodes.ASM7, access, name, desc, signature, exceptions);
         this.mapping = mapping;
@@ -45,7 +51,7 @@ public class CoverageMethodVisitor extends MethodNode {
                 }
             }
             if (needInsert) {
-                instructions.insertBefore(instructions.get(0), new MethodInsnNode(Opcodes.INVOKESTATIC, "com/ss/android/ugc/bytex/coverage_lib/CoverageLogger", "Log", "(I)V", false));
+                instructions.insertBefore(instructions.get(0), new MethodInsnNode(Opcodes.INVOKESTATIC, CoveragePlugin.REPORTER_CLASS, CoveragePlugin.REPORTER_METHOD, "(I)V", false));
                 instructions.insertBefore(instructions.get(0), new LdcInsnNode(mapping));
             }
         }

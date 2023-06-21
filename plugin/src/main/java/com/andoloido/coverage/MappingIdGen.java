@@ -9,6 +9,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * mapping id generator
+ */
 public class MappingIdGen {
 
     private AtomicInteger lastIndex;
@@ -17,6 +20,13 @@ public class MappingIdGen {
 
     String latestFilePath;
     String mappingFilePath;
+
+    /**
+     * constructor
+     * @param latestFilePath path
+     * @param mappingFilePath path
+     * @throws IOException exception
+     */
     public MappingIdGen(String latestFilePath, String mappingFilePath) throws IOException {
         this.latestFilePath = latestFilePath;
         this.mappingFilePath = mappingFilePath;

@@ -13,25 +13,26 @@ import java.util.function.Function;
  */
 public class FileUtil {
 
-    public static void saveFile(String content, String path) throws IOException {
-        File file = new File(path);
-        checkFile(file);
-        try (FileWriter fileWriter = new FileWriter(file);
-             BufferedWriter bufferedWriter = new BufferedWriter(fileWriter)) {
-            bufferedWriter.write(content);
-            bufferedWriter.flush();
-        }
-    }
+//    public static void saveFile(String content, String path) throws IOException {
+//        File file = new File(path);
+//        checkFile(file);
+//        try (FileWriter fileWriter = new FileWriter(file);
+//             BufferedWriter bufferedWriter = new BufferedWriter(fileWriter)) {
+//            bufferedWriter.write(content);
+//            bufferedWriter.flush();
+//        }
+//    }
 
-    public static void appendContent(String content, String path) throws IOException {
-        File file = new File(path);
-        checkFile(file);
-        try (FileWriter fileWriter = new FileWriter(file, true)) {
-            fileWriter.write(content);
-            fileWriter.flush();
-        }
-    }
+//    public static void appendContent(String content, String path) throws IOException {
+//        File file = new File(path);
+//        checkFile(file);
+//        try (FileWriter fileWriter = new FileWriter(file, true)) {
+//            fileWriter.write(content);
+//            fileWriter.flush();
+//        }
+//    }
 
+    // read by line
     public static void readTxtByLine(String filePath, Function<String, Boolean> function) throws IOException {
         File file = new File(filePath);
         checkFile(file);
@@ -44,6 +45,7 @@ public class FileUtil {
         }
     }
 
+    // check file
     public static void checkFile(File file) throws IOException {
         if (!file.getParentFile().exists()) {
             file.getParentFile().mkdirs();

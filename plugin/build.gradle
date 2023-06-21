@@ -12,9 +12,12 @@ plugins {
     // Apply the Groovy plugin to add support for Groovy
     id 'groovy'
 
+    id 'maven-publish'
+
     id "com.gradle.plugin-publish"
 
     id 'java'
+
     id 'kotlin'
 }
 
@@ -22,6 +25,11 @@ repositories {
     // Use Maven Central for resolving dependencies.
     mavenCentral()
 }
+
+// The project version will be used as your plugin version when publishing.
+version = '0.0.2'
+group = 'io.github.andoloido.coverage'
+
 
 dependencies {
     // Use the awesome Spock testing and specification framework
@@ -32,46 +40,27 @@ dependencies {
 
     implementation "com.android.tools.build:gradle:${gradle_version}"
 
-    //ASM
+    // ASM
     implementation "org.ow2.asm:asm:$asm_version"
     implementation "org.ow2.asm:asm-util:$asm_version"
     implementation "org.ow2.asm:asm-commons:$asm_version"
 }
 
 gradlePlugin {
+
     plugins {
         coveragePlugin {
-            id = 'com.andoloido.coverage'   //插件的id，到时候apply的插件id
+            id = 'io.github.andoloido.coverage'   //插件的id，到时候apply的插件id
             implementationClass = 'com.andoloido.coverage.CoveragePlugin'
             displayName = 'Coverage Plugin'
-            description = 'code coverage'  //插件描述
-//            tags = ['coverage', 'asm']
+            description = 'use ASM when transform code to report which class is used on line, this plugin can help to remove unused code'  //插件描述
         }
     }
 }
 
-// Add a source set for the functional test suite
-//sourceSets {
-//    functionalTest {
-//    }
-//}
-
-//gradlePlugin.testSourceSets(sourceSets.functionalTest)
-//configurations.functionalTestImplementation.extendsFrom(configurations.testImplementation)
-
-// Add a task to run the functional tests
-//tasks.register('functionalTest', Test) {
-//    testClassesDirs = sourceSets.functionalTest.output.classesDirs
-//    classpath = sourceSets.functionalTest.runtimeClasspath
-//    useJUnitPlatform()
-//}
-//
-//tasks.named('check') {
-//    // Run the functional tests as part of `check`
-//    dependsOn(tasks.functionalTest)
-//}
-//
-//tasks.named('test') {
-//    // Use JUnit Platform for unit tests.
-//    useJUnitPlatform()
-//}
+pluginBundle {
+    website = 'https://github.com/andoloido/CodeCoverage'
+    vcsUrl = 'https://github.com/andoloido/CodeCoverage'
+    description = 'use ASM when transform code to report which class is used on line, this plugin can help to remove unused code'  //插件描述
+    tags = ['coverage', 'ASM']
+}

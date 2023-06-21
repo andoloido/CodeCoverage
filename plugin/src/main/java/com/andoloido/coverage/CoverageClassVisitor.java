@@ -4,12 +4,20 @@ import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
+/**
+ * ClassVisitor
+ */
 public class CoverageClassVisitor extends ClassVisitor {
     ClassVisitor clv;
     MappingIdGen mappingIdGen;
 
     private String className;
 
+    /**
+     * constructor
+     * @param clv class visitor
+     * @param mappingIdGen mapping id generator
+     */
     public CoverageClassVisitor(ClassVisitor clv, MappingIdGen mappingIdGen) {
         super(Opcodes.ASM7, clv);
         this.mappingIdGen = mappingIdGen;
@@ -54,7 +62,7 @@ public class CoverageClassVisitor extends ClassVisitor {
             index++;
             MethodVisitor methodVisitor = super.visitMethod(Opcodes.ACC_STATIC, "<clinit>", "()V", null, null);
             methodVisitor.visitLdcInsn(id);
-            methodVisitor.visitMethodInsn(Opcodes.INVOKESTATIC, "com/ss/android/ugc/bytex/coverage_lib/CoverageLogger", "Log", "(I)V", false);
+            methodVisitor.visitMethodInsn(Opcodes.INVOKESTATIC, CoveragePlugin.REPORTER_CLASS, CoveragePlugin.REPORTER_METHOD, "(I)V", false);
             methodVisitor.visitInsn(Opcodes.RETURN);
             methodVisitor.visitEnd();
         }

@@ -2,6 +2,7 @@ package com.andoloido.coverage
 
 import com.android.build.api.transform.*
 import com.android.build.gradle.internal.pipeline.TransformManager
+import com.android.utils.FileUtils
 import org.objectweb.asm.ClassReader
 import org.objectweb.asm.ClassWriter
 import java.io.File
@@ -138,22 +139,45 @@ class CustomTransform(val idGen: MappingIdGen) : Transform() {
         transformInvocation: TransformInvocation,
         directoryInput: DirectoryInput
     ) {
+
+        if (directoryInput.file.isDirectory) {
+            directoryInput.file.walk().forEach { inputFile ->
+                val name = inputFile.name
+                if (isNeedTraceClass(name)) {
+                    println ("----------- deal with class file <' + $name + '> -----------")
+                    val inputStream = FileInputStream(inputFile)
+//                    val destFile = File(dest, file.path.substring(directoryInput.file.path.length))
+                    val outputStream = FileOutputStream(inputFile.parentFile.absolutePath + File.separator + name)
+
+                    //1. 构建ClassReader对象
+                    val classReader = ClassReader(inputStream)
+                    //2. 构建ClassVisitor的实现类ClassWriter
+                    val classWriter = ClassWriter(ClassWriter.COMPUTE_MAXS)
+                    //3. 将ClassReader读取到的内容回调给ClassVisitor接口
+                    classReader.accept(CoverageClassVisitor(classWriter, idGen), ClassReader.EXPAND_FRAMES)
+                    //4. 通过classWriter对象的toByteArray方法拿到完整的字节流
+                    outputStream.write(classWriter.toByteArray())
+                    inputStream.close()
+                    outputStream.close()
+                }
+            }
+        }
         val dest = transformInvocation.outputProvider.getContentLocation(
             directoryInput.name,
             directoryInput.contentTypes,
             directoryInput.scopes,
             Format.DIRECTORY
         )
-        println(dest)
-        directoryInput.file.walk().forEach { file ->
-            val destFile = File(dest, file.path.substring(directoryInput.file.path.length))
-            if (file.isDirectory) {
-                destFile.mkdirs()
-            } else {
-                destFile.parentFile.mkdirs()
-                copyFile(file, destFile)
-            }
-        }
+        FileUtils.copyDirectory(directoryInput.file, dest)
+//        directoryInput.file.walk().forEach { file ->
+//            val destFile = File(dest, file.path.substring(directoryInput.file.path.length))
+//            if (file.isDirectory) {
+//                destFile.mkdirs()
+//            } else {
+//                destFile.parentFile.mkdirs()
+//                copyFile(file, destFile)
+//            }
+//        }
     }
 
     private fun copyFile(inputFile: File, outputFile: File) {
@@ -176,8 +200,7 @@ class CustomTransform(val idGen: MappingIdGen) : Transform() {
 
     fun isNeedTraceClass(name: String): Boolean {
         if (!name.endsWith(".class")
-            || name.startsWith("R.class")
-            || name.startsWith("R$")
+            ||!name.startsWith("com/zhihu/android/follow")
         ) {
             return false
         }

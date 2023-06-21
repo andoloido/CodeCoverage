@@ -10,6 +10,11 @@ import java.util.Locale
 
 class CoveragePlugin : Plugin<Project> {
 
+    companion object {
+        const val REPORTER_CLASS = "com/zhihu/android/community_base/CoverageReporter"
+        const val REPORTER_METHOD = "Report"
+    }
+
     lateinit var mappingIdGen: MappingIdGen
 
     override fun apply(project: Project) {
