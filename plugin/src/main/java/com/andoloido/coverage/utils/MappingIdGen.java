@@ -1,4 +1,4 @@
-package com.andoloido.coverage;
+package com.andoloido.coverage.utils;
 
 import com.android.utils.FileUtils;
 

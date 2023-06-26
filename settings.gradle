@@ -9,3 +9,4 @@
 
 rootProject.name = 'CodeCoverage'
 include('plugin')
+include ':myapplication'

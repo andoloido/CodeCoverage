@@ -1,5 +1,7 @@
 package com.andoloido.coverage;
 
+import com.andoloido.coverage.utils.MappingIdGen;
+
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;

@@ -1,5 +1,6 @@
 package com.andoloido.coverage
 
+import com.andoloido.coverage.utils.MappingIdGen
 import com.android.build.api.transform.*
 import com.android.build.gradle.internal.pipeline.TransformManager
 import com.android.utils.FileUtils
@@ -13,8 +14,9 @@ import java.util.jar.JarFile
 import java.util.jar.JarOutputStream
 import java.util.zip.ZipEntry
 
-class CustomTransform(val idGen: MappingIdGen) : Transform() {
+class OldCoverageTransform(val idGen: MappingIdGen) : Transform() {
 
+    lateinit var ext: CoverageExtension
     override fun getName() = "CustomTransform"
 
 
@@ -48,7 +50,6 @@ class CustomTransform(val idGen: MappingIdGen) : Transform() {
         }
 
         transformInvocation.inputs?.forEach { transformInput ->
-            println(transformInput)
             transformInput.directoryInputs.forEach { directoryInput ->
                 processDirectoryInput(transformInvocation, directoryInput)
             }
@@ -142,12 +143,14 @@ class CustomTransform(val idGen: MappingIdGen) : Transform() {
 
         if (directoryInput.file.isDirectory) {
             directoryInput.file.walk().forEach { inputFile ->
-                val name = inputFile.name
+                if (!inputFile.isFile || inputFile.extension != "class") return@forEach
+                val name = getClassFullName(inputFile)
+//                inputFile.name
                 if (isNeedTraceClass(name)) {
                     println ("----------- deal with class file <' + $name + '> -----------")
                     val inputStream = FileInputStream(inputFile)
 //                    val destFile = File(dest, file.path.substring(directoryInput.file.path.length))
-                    val outputStream = FileOutputStream(inputFile.parentFile.absolutePath + File.separator + name)
+                    val outputStream = FileOutputStream(inputFile.parentFile.absolutePath + File.separator + inputFile.name)
 
                     //1. 构建ClassReader对象
                     val classReader = ClassReader(inputStream)
@@ -200,10 +203,16 @@ class CustomTransform(val idGen: MappingIdGen) : Transform() {
 
     fun isNeedTraceClass(name: String): Boolean {
         if (!name.endsWith(".class")
-            ||!name.startsWith("com/zhihu/android/follow")
+            ||!name.startsWith("debug/com/example/myapplication/ui/login")
         ) {
             return false
         }
         return true
+    }
+
+    private fun getClassFullName(file: File): String {
+        val absolutePath = file.absolutePath
+        val startIndex = absolutePath.indexOf("classes") + "classes".length + 1
+        return absolutePath.substring(startIndex)
     }
 }
